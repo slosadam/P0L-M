@@ -1,0 +1,6 @@
+(defvar rotate 3)
+
+(defun foo (c p) 
+(put :balloons c)
+(put :balloons p)
+(move rotate)

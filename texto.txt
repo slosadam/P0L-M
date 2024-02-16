@@ -1,1 +1,0 @@
-leerá todo el contenido de un archivo y lo devolverá como una cadena de texto, este es una buena forma de leer un archivo solo si tu archivo de texto no es muy grande.

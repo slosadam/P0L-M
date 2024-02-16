@@ -51,18 +51,6 @@ tokens = [("name", "fo"),("(",""),("var", "4"),(")","")]
 def delimitador(tokens: list)->int:
     i=0
     abiertos=1 
-    """""
-    Quizás la métrica de la indexación induce un espacio topológico, aparantemente discreto, sobre la lista. 
-    Sea tau una familia de subconjuntos de la lista.
-    En primer lugar, el vacío y la lista completa pertenecen a tau.
-    As,i mismo, la unión arbitraria de elementos de tau, pertenece a tau.
-    Consideremos el conjunto A, una unión arbitraria no vacía de elementos de tau.
-    Para todo x en  A se cumple que la bola centrada en x de radio 1 es igual a {x}, luego {x} está contenido en A.
-    Concluimos que A es un abierto y por ende la unión arbitraria está en tau.
-    Por último, por el mismo argumento, la intersección finita de elementos de tau está en tau.
-    Concluimos que tau es un espacio topológico.
-    Ahora, la demostración de que la indexación es una métrica queda como ejercicio para el lector.
-    """""
     centinela = True
     while centinela:
         if tokens[i][0] == "(":
@@ -270,6 +258,7 @@ def funcion_bien_definida(tokens: list)->bool:
     
     
 
-#print(funcion_bien_definida(tokens))
+def analizador(tokens:list)->bool:
+    return False
     
                     
