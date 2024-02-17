@@ -1,11 +1,6 @@
 """"
 ANALISIS SINTAXIS
 """
-    
-#del list[len(list)-1]
-#tokens = [("(", ""), ("v", "4"),(")","")]
-
-#run-dirs sacara el len y debe ser mayor a 0
 funciones = {
     "move": 1,
     "skip" : 1, 
@@ -15,14 +10,11 @@ funciones = {
 
 
 
-variables_globales = set()
-variables_globales.add("num")
+variables_globales = set(["0","1","2","3","4","5","6","7","8","9",":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"])
 
-#variables_globales.add()
-
-tokens_jr = [("fun", "skip"),("var", "cornelio"), (")", "")]
-tokens_jr_jr = [("fun","move-dir"),("var","num"),(":back", ""),(")"," ")]
-
+for i in range(0, 100001):
+    variables_globales.add(str(i))
+    
 def parentesis_okay(tokens: list)->bool:
     ultimo_elem = len(tokens)-1
     if not(tokens[0][0] == "(" and tokens[ultimo_elem][0] == ")"):
@@ -43,11 +35,7 @@ def parentesis_okay(tokens: list)->bool:
             return True
         else: 
             return False
-# (def nombre (4))
-# (("(", ""), ("def", ""), ("nombre", "funcion"), ("var", "4"), (")", ""))
-
-tokens = [("name", "fo"),("(",""),("var", "4"),(")","")]
-#print(parentesis_okay(tokens))    
+   
 def delimitador(tokens: list)->int:
     i=0
     abiertos=1 
@@ -63,10 +51,10 @@ def delimitador(tokens: list)->int:
     return i
 
 def defvar(tokens: list)->bool:
-    if len(tokens)==3:
-        if tokens[0][0]== "name":
-            variables_globales.add(tokens[0][1])
-            if tokens[1][0] == "num":
+    if len(tokens)==4:
+        if tokens[1][0]== "var":
+            variables_globales.add(tokens[1][1])
+            if tokens[2][0] == "var":
                 return True
             else:
                 return False
@@ -75,9 +63,9 @@ def defvar(tokens: list)->bool:
 
 # Asignar debe llamarse cuando la función que se detecte sea "=".
 def asignar(tokens: list)->bool:
-    if len(tokens)==3:
-        if tokens[0][1] in variables_globales:
-            if tokens[1][0] == "num":
+    if len(tokens)==4:
+        if tokens[1][1] in variables_globales:
+            if tokens[2][0] == "var":
                 return True
             else:
                 return False
@@ -86,7 +74,7 @@ def asignar(tokens: list)->bool:
 
 def put(tokens: list)->bool:
     if len(tokens)==4:
-        if tokens[1][0]== ":balloons" or tokens[1][0]== ":chips":
+        if tokens[1][1]== ":balloons" or tokens[1][1]== ":chips":
             if tokens[2][1] in variables_globales:
                 if tokens[3][0] == ")":
                     return True
@@ -100,7 +88,7 @@ def put(tokens: list)->bool:
 
 def pick(tokens: list)->bool:
     if len(tokens)==4:
-        if tokens[1][0]== ":balloons" or tokens[1][0]== ":chips":
+        if tokens[1][1]== ":balloons" or tokens[1][1]== ":chips":
             if tokens[2][1] in variables_globales:
                 if tokens[3][0] == ")":
                     return True
@@ -111,13 +99,12 @@ def pick(tokens: list)->bool:
         else:
             return False
     return False
-#print(pick(tokens_jr_jr))
 
 
 
 def turn(tokens: list)->bool:
     if len(tokens)==3:
-        if tokens[1][0]== ":left" or tokens[1][0]== ":right" or tokens[1][0] == ":around":
+        if tokens[1][1]== ":left" or tokens[1][1]== ":right" or tokens[1][1] == ":around":
                 if tokens[2][0] == ")":
                     return True
                 else:
@@ -125,11 +112,10 @@ def turn(tokens: list)->bool:
         else:
             return False
     return False
-#print(turn(tokens_jr_jr))
 
 def face(tokens: list)->bool:
     if len(tokens)==3:
-        if tokens[1][0]== ":north" or tokens[1][0]== ":west" or tokens[1][0] == ":south" or tokens[1][0] == ":east" :
+        if tokens[1][1]== ":north" or tokens[1][1]== ":west" or tokens[1][1] == ":south" or tokens[1][1] == ":east" :
                 if tokens[2][0] == ")":
                     return True
                 else:
@@ -137,14 +123,17 @@ def face(tokens: list)->bool:
         else:
             return False
     return False
-#print(face(tokens_jr_jr))
 
-def move(tokens: list)-> bool:
-    if len(tokens) == 3:
-        if tokens[1][0] in variables_globales:
-            if tokens[2][0] == ")":
-                return True
-            else: return False
+def run_dirs(tokens: list)-> bool:
+    if len(tokens) > 1:
+        i=1
+        centinela=True
+        while i<len(tokens)-1 and centinela:
+            if tokens[i][1] != ":front" and tokens[i][1] != ":right" and tokens[i][1] != ":left" and tokens[i][1] != ":back":
+                return False
+            i+=1
+        if tokens[i][0]== ")":
+            return True
         else:
             return False
     else:
@@ -154,7 +143,7 @@ def move(tokens: list)-> bool:
 def move_dir(tokens: list)-> bool:
     if len(tokens) == 4:
         if tokens[1][1] in variables_globales:
-            if tokens[2][0]== ":front" or tokens[2][0]== ":right" or tokens[2][0] == ":left" or tokens[2][0] == ":back" :
+            if tokens[2][1]== ":front" or tokens[2][1]== ":right" or tokens[2][1] == ":left" or tokens[2][1] == ":back" :
                 if tokens[3][0] == ")":
                     return True
                 else: return False
@@ -164,12 +153,11 @@ def move_dir(tokens: list)-> bool:
             return False
     else:
         return False   
-#print(move_dir(tokens_jr_jr))
 
 def move_face(tokens: list)-> bool:
     if len(tokens) == 4:
         if tokens[1][1] in variables_globales:
-            if tokens[2][0]== ":north" or tokens[2][0]== ":west" or tokens[2][0] == ":south" or tokens[2][0] == ":east" :
+            if tokens[2][1]== ":north" or tokens[2][1]== ":west" or tokens[2][1] == ":south" or tokens[2][1] == ":east" :
                 if tokens[3][0] == ")":
                     return True
                 else: return False
@@ -179,19 +167,16 @@ def move_face(tokens: list)-> bool:
             return False
     else:
         return False   
-#print(move_face(tokens_jr_jr))
-
-
 
 def llamar_funcion(tokens: list)-> bool:    
     if len(tokens) == funciones[tokens[0][1]] + 2:
-        centinela = (tokens[1][0] == "var")
+        centinela = (tokens[1][1] in variables_globales)
         contador = 0
         i = 1
         while centinela:
             if tokens[i][0]== ")":
                 centinela = False
-            elif tokens[i][0] == "var":
+            elif tokens[i][1] in variables_globales:
                 contador += 1
             else: 
                 return False
@@ -201,28 +186,38 @@ def llamar_funcion(tokens: list)-> bool:
         return False
 
 #Hace falta completar los condicionales con las demás funciones
-def recorrer_llamado(tokens: list)->bool:
+def recorrer_llamado_funcion(tokens: list)->bool:
+    tamaño=len(tokens)
     if tokens[0][1] in funciones:
-        return llamar_funcion(tokens)
-    if tokens[0][1] == "put":
-        return put(tokens)
-    if tokens[0][1] == "move":
-        return move(tokens)
+        return llamar_funcion(tokens[0:tamaño])
+    elif tokens[0][1] == "put":
+        return put(tokens[0:tamaño])
+    elif tokens[0][1] == "move-dir":
+        return move_dir(tokens[0:tamaño])
+    elif tokens[0][1] == "=":
+        return asignar(tokens[0:tamaño])
+    elif tokens[0][1] == "pick":
+        return pick(tokens[0:tamaño])
+    elif tokens[0][1] == "turn":
+        return turn(tokens[0:tamaño])
+    elif tokens[0][1] == "face":
+        return face(tokens[0:tamaño])
+    elif tokens[0][1] == "move-face":
+        return move_face(tokens[0:tamaño])
+    elif tokens[0][1] == "run-dirs":
+        return run_dirs(tokens[0:tamaño])
     else:
         return False
-    
-#print(recorrer_llamado(tokens_jr_jr))
-#print(llamar_funcion(tokens_jr))
 
 def funcion_bien_definida(tokens: list)->bool:
-    if tokens[0][0] == "name":
-        if tokens[1][0] == "(":
+    if tokens[1][0] == "fun":
+        if tokens[2][0] == "(":
             variables = set()
-            centinela = (tokens[2][0] == "var")
-            i = 3
+            centinela = (tokens[3][0] == "var")
+            i = 4
             if centinela:
-                variables.add(tokens[2][1])
-                variables_globales.add(tokens[2][1])
+                variables.add(tokens[3][1])
+                variables_globales.add(tokens[3][1])
                 while centinela: 
                     if tokens[i][0] == ")":
                         centinela = False
@@ -232,32 +227,56 @@ def funcion_bien_definida(tokens: list)->bool:
                     else:
                         return False
                     i+=1
-            if i< len(tokens):
-                centinela = tokens[i][0]=="fun"
-                if centinela:
-                    while centinela:
-                        delimitador = delimitador(tokens[i:len(tokens)])
-                        nuevo_limite=i+delimitador
-                        if not recorrer_llamado(tokens[i:nuevo_limite]):
-                            return False
-                        if nuevo_limite+1<len(tokens): 
-                            i=nuevo_limite+1
-                        else:
-                            centinela = False
-                if tokens[i][0]==")":
-                    funciones[tokens[0][0]:len(variables)]
-                    for i in variables:
-                        variables_globales.remove(i)
-                    return True
+            if (tokens[i-1][0] == ")"):
+                if i< len(tokens):
+                    if tokens[i][0] == "(":
+                        i+=1
+                        centinela_fun = tokens[i][0]=="fun"
+                        if centinela_fun:
+                            while centinela_fun:
+                                final = delimitador(tokens[i:len(tokens)-1])
+                                nuevo_limite=i+final
+                                if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
+                                    return False
+                                if nuevo_limite+1<len(tokens): 
+                                    i=nuevo_limite+1
+                                else:
+                                    centinela_fun = False
+                        if tokens[nuevo_limite][0]==")":
+                            funciones[tokens[1][1]]=len(variables)
+                            if len(variables) != 0:
+                                for i in variables:
+                                    variables_globales.remove(i)
+                                return True
             else:
                 return False    
         else:
             return False
     else: 
         return False
-    
-    
 
+def identificador_llamado(tokens:list)->bool:
+    tamaño=len(tokens)
+    if tokens[0][0]=="defvar":
+        return defvar(tokens[0:tamaño])
+    if tokens[0][0]=="defun":
+        return funcion_bien_definida(tokens[0:tamaño])
+    if tokens[0][0]=="control":
+        return False
+    if tokens[0][0]=="fun":
+        return recorrer_llamado_funcion(tokens[0:tamaño])
+    else:
+        return False
+        
 def analizador(tokens:list)->bool:
-    return False
+    if "defectuoso" not in tokens:
+        resultado=True
+        i=0
+        while i<len(tokens) and resultado:            
+            if parentesis_okay(tokens[i]):
+                resultado=identificador_llamado(tokens[i][1:len(tokens[i])])
+            i+=1
+        return resultado    
+    else:
+        return False
     
