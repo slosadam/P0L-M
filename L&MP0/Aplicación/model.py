@@ -261,4 +261,3 @@ def funcion_bien_definida(tokens: list)->bool:
 def analizador(tokens:list)->bool:
     return False
     
-                    

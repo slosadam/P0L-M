@@ -17,7 +17,8 @@ def iniciar_menu():
         print("A continuación, se llevará a cabo el análisis del léxico y la sintáxis del texto ingresado.")
         print("------------------------------------------------------------------\n")
         instrucciones=Controller.instrucciones(texto)
-        
+        tokens = Controller.tokenizar(instrucciones)
+        print(tokens)
         
     except (FileNotFoundError):
         print("------------------------------------------------------------------\n")

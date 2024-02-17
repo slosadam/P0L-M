@@ -14,14 +14,13 @@ producciones = {
 estructuras_de_control = ["IF","LOOP","REPEAT"]
 funciones = ["=","MOVE","SKIP","TURN","FACE","PUT","PICK","MOVE-DIR","RUN-DIRS","MOVE-FACE","NULL"]
 condiciones= ["FACING?","BLOCKED?","CAN-PUT?","CAN-PICK?","CAN-MOVE?","ISZERO?","NOT"]
-definir=["DEFVAR","DEFUN"]
 variables=["0","1","2","3","4","5","6","7","8","9",":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",":FRONT",":BACK",":BALLOONS",":CHIPS"]
 
 def delimitador_cadenas(cadena: str)->int:
     i=1
     while True:
         if cadena[i]==" " or cadena[i]==")":
-            return i-1
+            return i+1
         i+=1
         
 def delimitador_instruccion(texto: str)->int:
@@ -45,7 +44,7 @@ def delimitador_instruccion(texto: str)->int:
         return -1
 
 def abrir_archivo(nombre_usuario: str)->str:
-    nombre = str("Archivo texto\\") + str(nombre_usuario) 
+    nombre = str("L&MP0//Archivo texto//") + str(nombre_usuario) 
     with open(nombre, 'r') as archivo:
         contenido = archivo.read()
         return contenido
@@ -72,11 +71,79 @@ def instrucciones(cadena:str)->list:
 def tokenizador(cadena : str)->list:
     tamaño = len(cadena)
     i=0
+    lst_final = []
     while i<tamaño:
         if cadena[i]=="(":
-            return ("(","")
+            lst_final.append(("(",""))
+            i+=1
+            
         elif cadena[i]==")":
-            return (")","")
+            lst_final.append((")",""))
+            i+=1
+        elif cadena[i] == " ":
+            i+=1
+        else: 
+            final = delimitador_cadenas(cadena[i:tamaño]) 
+            
+            if cadena[i:(i + final -1)].upper() in estructuras_de_control:
+                lst_final.append((cadena[i:(i + final -1)].lower(), " "))
+                i += final - 1
+            elif cadena[i:(i + final -1)].upper() in funciones:
+                lst_final.append(("fun", cadena[i:(i + final -1)].lower()))
+                i += final - 1
+            elif cadena[i:(i + final -1)].upper() in condiciones:
+                lst_final.append(("cond", cadena[i:(i + final -1)].lower()))
+                i +=final - 1
+            elif cadena[i:(i + final -1)].upper() in variables:
+                lst_final.append(("var", cadena[i:(i + final -1)].lower()))
+                i += final - 1
+            elif cadena[i:final].upper() == "DEFVAR":
+                lst_final.append(("defvar", ""))
+                i += final
+                if i < tamaño and cadena[i] != " " and cadena[i] != ")":
+                    final_falso = delimitador_cadenas(cadena[i:tamaño]) + i
+                    lst_final.append(("var", cadena[i:final_falso]))
+                    variables.append((cadena[i:final_falso-1]).upper())
+                    i += final_falso
+            elif cadena[i:final].upper() == "DEFUN":
+                lst_final.append(("fun", cadena[i:final]))
+                i += final
+                if i < tamaño and cadena[i] != " " and cadena[i] != ")":
+                    final_falso = delimitador_cadenas(cadena[i:tamaño]) + i
+                    lst_final.append(("fun", cadena[i:final_falso]))
+                    funciones.append(cadena[i:final_falso-1].upper())
+                    i += (final_falso - i) 
+                    if i < tamaño:
+                        if cadena[i] == "(":
+                            lst_final.append(("(",""))
+                            i+=1
+                            if cadena[i] == ")":
+                                lst_final.append((")", "")) 
+                                i += 1
+                            else:  
+                                final_alt = delimitador_cadenas(cadena[i:tamaño]) +1
+                                j = i
+                                while i< (j + final_alt):
+                                    final_feliz = delimitador_cadenas(cadena[i:i + final_alt])
+                                    lst_final.append(("var", cadena[i:final_feliz + i - 1]))
+                                    variables.append( cadena[i:final_feliz + i - 1].upper())
+                                    i += final_feliz 
+                                i -= 1
+    
+    return lst_final
+
+def tokenizar(instrucciones: list)->list:
+    tokens = []
+    if "ERROR_PARENTESIS_LLAMEN_A_DIOS" in instrucciones:
+        tokens.append("defectuoso")
+    else:    
+        for i in instrucciones:
+            tokens_ins = tokenizador(i)
+            tokens.append(tokens_ins)
+    
+    return tokens
+
+
     
     
     
