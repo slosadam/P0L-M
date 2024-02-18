@@ -7,10 +7,11 @@ funciones = {
     "null" : 0, 
 }
 
+#cambio de rama prueba
 
 
-
-variables_globales = set(["0","1","2","3","4","5","6","7","8","9",":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"])
+variables_globales = set(["0","1","2","3","4","5","6","7","8","9",":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",
+                          ":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"])
 
 for i in range(0, 100001):
     variables_globales.add(str(i))

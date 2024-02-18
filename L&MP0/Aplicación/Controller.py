@@ -14,7 +14,8 @@ producciones = {
 estructuras_de_control = ["IF","LOOP","REPEAT"]
 funciones = ["=","MOVE","SKIP","TURN","FACE","PUT","PICK","MOVE-DIR","RUN-DIRS","MOVE-FACE","NULL"]
 condiciones= ["FACING?","BLOCKED?","CAN-PUT?","CAN-PICK?","CAN-MOVE?","ISZERO?","NOT"]
-variables=[":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"]
+variables=[":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS",
+           "MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"]
 for i in range(0, 100001):
     variables.append(str(i))
 def delimitador_cadenas(cadena: str)->int:
