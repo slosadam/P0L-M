@@ -268,6 +268,7 @@ def if_cond(tokens: list)->bool:
     i = 0
     if tokens[0][0] == "if":
         i += 1
+        
         if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
             i+=1
             if tokens[2][1] in variables_globales:
@@ -430,9 +431,9 @@ def funcion_bien_definida(tokens: list)->bool:
                 if i< len(tokens):
                     if tokens[i][0] == "(":
                         i+=1
-                        centinela_fun = tokens[i][0]=="cond"
-                        if centinela_fun:
-                            while centinela_fun:
+                        centinela_cond = tokens[i][0]=="cond"
+                        if centinela_cond:
+                            while centinela_cond:
                                 final = delimitador(tokens[i:len(tokens)-1])
                                 nuevo_limite=i+final
                                 if not recorrer_llamado_condicionales(tokens[i:nuevo_limite]):
@@ -442,8 +443,7 @@ def funcion_bien_definida(tokens: list)->bool:
                                 else:
                                     centinela_fun = False
                         if tokens[nuevo_limite][0]==")":
-                            funciones[tokens[1][1]]=len(variables)
-                                              
+                            funciones[tokens[1][1]]=len(variables)                     
                             if len(variables) != 0:
                                 for i in variables:
                                     variables_globales.remove(i)
@@ -454,6 +454,7 @@ def funcion_bien_definida(tokens: list)->bool:
             return False
     else: 
         return False
+
 
 def identificador_llamado(tokens:list)->bool:
     tamaño=len(tokens)
