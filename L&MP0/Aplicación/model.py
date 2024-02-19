@@ -4,14 +4,22 @@ ANALISIS SINTAXIS
 funciones = {
     "move": 1,
     "skip" : 1, 
-    "null" : 0, 
+    "null" : 0,
+    "isZero" : 1,
+    "not":1,
+    "facing?": 1,
+    "blocked?": 0,
+    "can-put?" :2,
+    "can-pick" :2 ,
+    "can-move?" :1, 
 }
 
 #cambio de rama prueba
 
 
 variables_globales = set(["0","1","2","3","4","5","6","7","8","9",":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",
-                          ":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"])
+                          ":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE",
+                          "CHIPSHERE","SPACES","FACING?", "BLOCKED?", "CAN-PUT?", "CAN-PICK", "CAN-MOVE?"])
 
 for i in range(0, 100001):
     variables_globales.add(str(i))
@@ -102,7 +110,6 @@ def pick(tokens: list)->bool:
     return False
 
 
-
 def turn(tokens: list)->bool:
     if len(tokens)==3:
         if tokens[1][1]== ":left" or tokens[1][1]== ":right" or tokens[1][1] == ":around":
@@ -169,6 +176,136 @@ def move_face(tokens: list)-> bool:
     else:
         return False   
 
+def facing_cond(tokens: list)->bool:
+    if len(tokens) == 3:
+        if tokens[1][1] == ":north" or tokens[1][1] == ":south" or tokens[1][1] == ":east" or tokens[1][1] == ":west":
+            if tokens[2][0] == ")":
+                return True
+            else:
+                return False
+        else: 
+            return False
+    else:
+        return False
+    
+def can_put(tokens: list)->bool:
+    if len(tokens)==4:
+        if tokens[1][1]== ":balloons" or tokens[1][1]== ":chips":
+            if tokens[2][1] in variables_globales:
+                if tokens[3][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    return False
+
+def can_pick(tokens: list)->bool:
+    if len(tokens)==4:
+        if tokens[1][1]== ":balloons" or tokens[1][1]== ":chips":
+            if tokens[2][1] in variables_globales:
+                if tokens[3][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    return False
+
+def can_move(tokens:list)->bool:
+    if len(tokens)==3:
+        if tokens[1][1]== ":north" or tokens[1][1]== ":west" or tokens[1][1] == ":south" or tokens[1][1] == ":east" :
+                if tokens[2][0] == ")":
+                    return True
+                else:
+                    return False
+        else:
+            return False
+    return False
+
+def not_cond(tokens:list)->bool:
+    if len(tokens) == 3:
+        if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "can-move?":
+            if tokens[2][0] == ")":
+                return True
+            else:
+                return False
+        else: 
+            return False
+    else:
+        return False
+
+def isZero(tokens: list)->bool:
+    if len(tokens) == 4:
+        if tokens[1][1] == "myChips" or tokens[1][1] == "myBalloons":
+            if tokens[2][1] in variables_globales:
+                if tokens[3][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    return False
+
+#revisar si funcion blocked es necesaria o puede ser aplicada igual que null
+def blocked(tokens: list)-> bool:
+    if len(tokens) == 0:
+        if tokens[1][1] == ")":
+            return True
+        else:
+            return False
+    else:
+        return False
+        
+
+def if_cond(tokens: list)->bool:
+    if len(tokens) > 0 :
+        if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
+            if tokens[2][1] in variables_globales:
+                if tokens[3][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    return False
+
+def repeate(tokens: list)->bool:
+    if len(tokens) == 3:
+        if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
+            if tokens[2][1] in variables_globales: # no se si este bien 
+                if tokens[3][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    return False
+
+def repeate_times(tokens: list)->bool:
+    if len(tokens) == 4:
+        if tokens[1][1] > 0 and tokens[1][1] in variables_globales:
+            if tokens[2][1] in variables_globales:
+                if tokens[3][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    return False
+      
 def llamar_funcion(tokens: list)-> bool:    
     if len(tokens) == funciones[tokens[0][1]] + 2:
         centinela = (tokens[1][1] in variables_globales)
@@ -207,6 +344,24 @@ def recorrer_llamado_funcion(tokens: list)->bool:
         return move_face(tokens[0:tamaño])
     elif tokens[0][1] == "run-dirs":
         return run_dirs(tokens[0:tamaño])
+    elif tokens[0][1] == "facing?":
+        return facing_cond(tokens[0:tamaño])
+    elif tokens[0][1] == "can-put?":
+        return can_put(tokens[0:tamaño])
+    elif tokens[0][1] == "can-pick?":
+        return can_pick(tokens[0:tamaño])
+    elif tokens[0][1] == "can-move?":
+        return can_move(tokens[0:tamaño])
+    elif tokens[0][1] == "not":
+        return not_cond(tokens[0:tamaño])
+    elif tokens[0][1] == "isZero?":
+        return isZero(tokens[0:tamaño])
+    elif tokens[0][1] == "if":
+        return if_cond(tokens[0: tamaño])
+    elif tokens[0][1] == "loop":
+        return repeate(tokens[0:tamaño])
+    elif tokens[0][1] == "repeat":
+        return repeate_times(tokens[0:tamaño])
     else:
         return False
 
