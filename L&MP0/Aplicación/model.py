@@ -270,32 +270,32 @@ def if_cond(tokens: list)->bool:
         i += 1
         if tokens[i][0] == "(":
             i+=1
-            recorrer_llamado_condicionales(tokens[i:len(tokens)-1])
             final = delimitador(tokens[i: len(tokens)-1])
-            if tokens[i][1]:
-                while i < len(tokens):
-                    if tokens[i][0] == "(":
-                        i+=1
-                        centinela_fun = tokens[i][0]=="fun"
-                        if centinela_fun:
-                            while centinela_fun:
-                                final = delimitador(tokens[i:len(tokens)-1])
-                                nuevo_limite=i+final
-                                if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
-                                    return False
-                                if nuevo_limite+1<len(tokens): 
-                                        i=nuevo_limite+1
-                                else:
-                                    centinela_fun = False 
-                                
-                        return True
+            if recorrer_llamado_condicionales(tokens[i:final]):
+                if tokens[i][1]:
+                    while i < len(tokens):
+                        if tokens[i][0] == "(":
+                            i+=1
+                            centinela_fun = tokens[i][0]=="fun"
+                            if centinela_fun:
+                                while centinela_fun:
+                                    final = delimitador(tokens[i:len(tokens)-1])
+                                    nuevo_limite=i+final
+                                    if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
+                                        return False
+                                    if nuevo_limite+1<len(tokens): 
+                                            i=nuevo_limite+1
+                                    else:
+                                        centinela_fun = False 
+                                    
+                            return True
+                    else:
+                        return False
+                
                 else:
                     return False
-            
             else:
                 return False
-        else:
-            return False
         
 
 def repeate(tokens: list)->bool:
