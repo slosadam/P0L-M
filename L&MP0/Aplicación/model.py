@@ -268,13 +268,27 @@ def if_cond(tokens: list)->bool:
     i = 0
     if tokens[0][0] == "if":
         i += 1
-        
         if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
             i+=1
             if tokens[2][1] in variables_globales:
                 i+=1
                 if tokens[3][0] == ")":
                     i+= 1
+                    if i < len(tokens):
+                        if tokens[i][0] == "(":
+                            i+=1
+                            centinela_fun = tokens[i][0]=="fun"
+                            if centinela_fun:
+                                while centinela_fun:
+                                    final = delimitador(tokens[i:len(tokens)-1])
+                                    nuevo_limite=i+final
+                                    if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
+                                        return False
+                                    if nuevo_limite+1<len(tokens): 
+                                        i=nuevo_limite+1
+                                    else:
+                                        centinela_fun = False 
+                            
                     return True
                 else:
                     return False
@@ -365,6 +379,17 @@ def recorrer_llamado_funcion(tokens: list)->bool:
         return move_face(tokens[0:tamaño])
     elif tokens[0][1] == "run-dirs":
         return run_dirs(tokens[0:tamaño])
+    else:
+        return False
+    
+def recorrer_llamado_condicionales(tokens: list)-> bool:
+    tamaño = len(tokens)
+    if tokens[0][1] == "if":
+        return if_cond(tokens[0: tamaño])
+    elif tokens[0][1] == "loop":
+        return repeate(tokens[0:tamaño])
+    elif tokens[0][1] == "repeat":
+        return repeate_times(tokens[0:tamaño])
     if tokens[0][1] == "facing?":
         return facing_cond(tokens[0:tamaño])
     elif tokens[0][1] == "can-put?":
@@ -377,18 +402,6 @@ def recorrer_llamado_funcion(tokens: list)->bool:
         return not_cond(tokens[0:tamaño])
     elif tokens[0][1] == "isZero?":
         return isZero(tokens[0:tamaño])
-    
-    else:
-        return False
-    
-def recorrer_llamado_condicionales(tokens: list)-> bool:
-    tamaño = len(tokens)
-    if tokens[0][1] == "if":
-        return if_cond(tokens[0: tamaño])
-    elif tokens[0][1] == "loop":
-        return repeate(tokens[0:tamaño])
-    elif tokens[0][1] == "repeat":
-        return repeate_times(tokens[0:tamaño])
     else: 
         return False
         
