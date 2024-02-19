@@ -268,32 +268,28 @@ def if_cond(tokens: list)->bool:
     i = 0
     if tokens[0][0] == "if":
         i += 1
-        if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
+        if tokens[1][0] == ")":
             i+=1
-            if tokens[2][1] in variables_globales:
-                i+=1
-                if tokens[3][0] == ")":
-                    i+= 1
-                    if i < len(tokens):
-                        if tokens[i][0] == "(":
-                            i+=1
-                            centinela_fun = tokens[i][0]=="fun"
-                            if centinela_fun:
-                                while centinela_fun:
-                                    final = delimitador(tokens[i:len(tokens)-1])
-                                    nuevo_limite=i+final
-                                    if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
-                                        return False
-                                    if nuevo_limite+1<len(tokens): 
-                                        i=nuevo_limite+1
-                                    else:
-                                        centinela_fun = False 
+           
+            while i < len(tokens):
+                if tokens[i][0] == "(":
+                    i+=1
+                    centinela_fun = tokens[i][0]=="fun"
+                    if centinela_fun:
+                        while centinela_fun:
+                            final = delimitador(tokens[i:len(tokens)-1])
+                            nuevo_limite=i+final
+                            if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
+                                return False
+                            if nuevo_limite+1<len(tokens): 
+                                    i=nuevo_limite+1
+                            else:
+                                centinela_fun = False 
                             
                     return True
-                else:
-                    return False
             else:
                 return False
+        
         else:
             return False
     else:
