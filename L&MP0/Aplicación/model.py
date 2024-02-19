@@ -265,7 +265,7 @@ def blocked(tokens: list)-> bool:
         
 
 def if_cond(tokens: list)->bool:
-    if len(tokens) > 0 :
+    if tokens[0][0] == "if":
         if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
             if tokens[2][1] in variables_globales:
                 if tokens[3][0] == ")":
@@ -276,10 +276,13 @@ def if_cond(tokens: list)->bool:
                 return False
         else:
             return False
-    return False
+    else:
+        return False
+    
 
 def repeate(tokens: list)->bool:
-    if len(tokens) == 3:
+    
+    if tokens[0][0] == "loop":
         if tokens[1][1] == "facing?" or tokens[1][1] == "blocked?" or tokens[1][1] == "can-put?" or tokens[1][1] == "can-pick?" or tokens[1][1]=="isZeor?" or tokens[1][1] == "not" or tokens[1][1] == "can-move?":
             if tokens[2][1] in variables_globales: # no se si este bien 
                 if tokens[3][0] == ")":
@@ -290,10 +293,11 @@ def repeate(tokens: list)->bool:
                 return False
         else:
             return False
-    return False
-
+    else: 
+        return False
+   
 def repeate_times(tokens: list)->bool:
-    if len(tokens) == 4:
+    if tokens[0][0] == "repeat":
         if tokens[1][1] > 0 and tokens[1][1] in variables_globales:
             if tokens[2][1] in variables_globales:
                 if tokens[3][0] == ")":
@@ -304,7 +308,9 @@ def repeate_times(tokens: list)->bool:
                 return False
         else:
             return False
-    return False
+    else:
+        return False
+    
       
 def llamar_funcion(tokens: list)-> bool:    
     if len(tokens) == funciones[tokens[0][1]] + 2:
@@ -344,7 +350,12 @@ def recorrer_llamado_funcion(tokens: list)->bool:
         return move_face(tokens[0:tamaño])
     elif tokens[0][1] == "run-dirs":
         return run_dirs(tokens[0:tamaño])
-    elif tokens[0][1] == "facing?":
+    else:
+        return False
+    
+def recorrer_llamado_condicionales(tokens: list)-> bool:
+    tamaño = len(tokens)
+    if tokens[0][1] == "facing?":
         return facing_cond(tokens[0:tamaño])
     elif tokens[0][1] == "can-put?":
         return can_put(tokens[0:tamaño])
@@ -362,8 +373,9 @@ def recorrer_llamado_funcion(tokens: list)->bool:
         return repeate(tokens[0:tamaño])
     elif tokens[0][1] == "repeat":
         return repeate_times(tokens[0:tamaño])
-    else:
+    else: 
         return False
+        
 
 def funcion_bien_definida(tokens: list)->bool:
     if tokens[1][0] == "fun":
@@ -417,8 +429,8 @@ def identificador_llamado(tokens:list)->bool:
         return defvar(tokens[0:tamaño])
     if tokens[0][0]=="defun":
         return funcion_bien_definida(tokens[0:tamaño])
-    if tokens[0][0]=="control":
-        return False
+    if tokens[0][0]=="cond":
+        return recorrer_llamado_condicionales(tokens[0:tamaño])
     if tokens[0][0]=="fun":
         return recorrer_llamado_funcion(tokens[0:tamaño])
     else:
