@@ -1,1 +1,3 @@
-(move-face 678 :east)
+(defun fill ()
+(repeat Spaces (if (not(isZero? myChips)) (put :chips 1)))
+)
