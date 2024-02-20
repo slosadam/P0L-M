@@ -18,8 +18,8 @@ funciones = {
 
 
 variables_globales = set(["0","1","2","3","4","5","6","7","8","9",":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",
-                          ":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS","MYCHIPS","MYBALLOONS","BALLOONSHERE",
-                          "CHIPSHERE","spaces","FACING?", "BLOCKED?", "CAN-PUT?", "CAN-PICK", "CAN-MOVE?"])
+                          ":FRONT",":BACK",":BALLOONS",":CHIPS","dim","myxpos","myypos","mychips","myballoons","balloonshere",
+                          "chipshere","spaces","FACING?", "BLOCKED?", "CAN-PUT?", "CAN-PICK", "CAN-MOVE?"])
 
 for i in range(0, 100001):
     variables_globales.add(str(i))
@@ -239,6 +239,77 @@ def not_cond(tokens:list)->bool:
         if tokens[i][0] == "(":
             i+=1
             final = delimitador(tokens[i: len(tokens)-1])
+            if recorrer_llamado_condicionales(tokens[i:final + i]):                                    
+                return True
+            else:
+                return False    
+        else:
+            return False
+    else:
+                return False
+
+def isZero(tokens: list)->bool:
+    if len(tokens) == 3:
+            if tokens[1][1] in variables_globales:
+                if tokens[2][0] == ")":
+                    return True
+                else:
+                    return False
+            else:
+                return False
+    return False
+
+#revisar si funcion blocked es necesaria o puede ser aplicada igual que null
+def blocked(tokens: list)-> bool:
+    if tokens[1][0] == ")":
+        return True
+    else:
+        return False
+
+        
+
+def if_cond(tokens: list)->bool:
+    i = 0
+    if tokens[0][1] == "if":
+        i += 1
+        if tokens[i][0] == "(":
+            i+=1
+            final = delimitador(tokens[i: len(tokens)-1])
+            if recorrer_llamado_condicionales(tokens[i:final + i]):
+                i+= final
+                while i < len(tokens):
+                    if tokens[i][0] == "(":
+                        i+=1
+                        centinela_fun = tokens[i][0]=="fun"
+                        if centinela_fun:
+                            while centinela_fun:
+                                final = delimitador(tokens[i:len(tokens)-1])
+                                nuevo_limite=i+final
+                                if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
+                                    return False
+                                if nuevo_limite+1<len(tokens): 
+                                        i=nuevo_limite+1
+                                else:
+                                    centinela_fun = False 
+                                    
+                        return True
+                    else:
+                        return False
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+        
+
+def repeate(tokens: list)->bool:
+    i = 0
+    if tokens[0][1] == "loop":
+        i += 1
+        if tokens[i][0] == "(":
+            i+=1
+            final = delimitador(tokens[i: len(tokens)-1])
             if recorrer_llamado_condicionales(tokens[i:final + i]):
                 i+= 2 + funciones[tokens[i][1]]
                 if i < len(tokens):
@@ -255,102 +326,6 @@ def not_cond(tokens:list)->bool:
                                         i=nuevo_limite+1
                                 else:
                                     centinela_fun = False 
-                                        
-                        return True
-                    else:
-                        return False    
-                else:
-                    return False
-            else:
-                return False
-    else:
-        return False
-
-def isZero(tokens: list)->bool:
-    if len(tokens) == 4:
-        if tokens[1][1] == "myChips" or tokens[1][1] == "myBalloons":
-            if tokens[2][1] in variables_globales:
-                if tokens[3][0] == ")":
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-    return False
-
-#revisar si funcion blocked es necesaria o puede ser aplicada igual que null
-def blocked(tokens: list)-> bool:
-    if len(tokens) == 0:
-        if tokens[1][1] == ")":
-            return True
-        else:
-            return False
-    else:
-        return False
-        
-
-def if_cond(tokens: list)->bool:
-    i = 0
-    if tokens[0][1] == "if":
-        i += 1
-        if tokens[i][0] == "(":
-            i+=1
-            final = delimitador(tokens[i: len(tokens)-1])
-            if recorrer_llamado_condicionales(tokens[i:final + i]):
-                i+= 2 + funciones[tokens[i][1]]
-                while i < len(tokens):
-                    if tokens[i][0] == "(":
-                        i+=1
-                        centinela_fun = tokens[i][0]=="fun"
-                        if centinela_fun:
-                            while centinela_fun:
-                                final = delimitador(tokens[i:len(tokens)-1])
-                                nuevo_limite=i+final
-                                if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
-                                    return False
-                                if nuevo_limite+1<len(tokens): 
-                                        i=nuevo_limite+1
-                                else:
-                                    centinela_fun = False 
-                                      
-                        return True
-                    else:
-                        return False    
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
-    else:
-        return False
-        
-
-def repeate(tokens: list)->bool:
-    i = 0
-    if tokens[0][1] == "loop":
-        i += 1
-        if tokens[i][0] == "(":
-            i+=1
-            final = delimitador(tokens[i: len(tokens)-1])
-        if recorrer_llamado_condicionales(tokens[i:final + i]):
-            i+= 2 + funciones[tokens[i][1]]
-            if i < len(tokens):
-                if tokens[i][0] == "(":
-                    i+=1
-                    centinela_fun = tokens[i][0]=="fun"
-                    if centinela_fun:
-                        while centinela_fun:
-                            final = delimitador(tokens[i:len(tokens)-1])
-                            nuevo_limite=i+final
-                            if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
-                                return False
-                            if nuevo_limite+1<len(tokens): 
-                                    i=nuevo_limite+1
-                            else:
-                                centinela_fun = False 
                                     
                     return True
                 else:
@@ -368,13 +343,8 @@ def repeate_times(tokens: list)->bool:
     if tokens[0][1] == "repeat":
         i+= 1
         if tokens[1][1] in variables_globales:
-             i += 1
-        if tokens[i][0] == "(":
-            i+=1
-            final = delimitador(tokens[i: len(tokens)-1])
-            if recorrer_llamado_condicionales(tokens[i:final + i]):
-                i+= 2 + funciones[tokens[i][1]]
-                if i < len(tokens):
+            i += 1
+            if i< len(tokens):
                     if tokens[i][0] == "(":
                         i+=1
                         centinela_fun = tokens[i][0]=="fun"
@@ -385,20 +355,30 @@ def repeate_times(tokens: list)->bool:
                                 if not recorrer_llamado_funcion(tokens[i:nuevo_limite]):
                                     return False
                                 if nuevo_limite+1<len(tokens): 
-                                        i=nuevo_limite+1
+                                    i=nuevo_limite+1
                                 else:
-                                    centinela_fun = False 
-                        return True
+                                    centinela_fun = False                 
+                        centinela_cond = tokens[i][0]== "control"
+                        if centinela_cond:
+                            while centinela_cond:
+                                final = delimitador(tokens[i:len(tokens)-1])
+                                nuevo_limite=i+final
+                                if not recorrer_llamado_condicionales(tokens[i:nuevo_limite]):
+                                    return False
+                                if nuevo_limite+1<len(tokens): 
+                                    i=nuevo_limite+1
+                                else:
+                                    centinela_cond = False
+                        if tokens[nuevo_limite][0]==")":                    
+                            return True
+                        else:
+                            return False    
                     else:
-                        return False    
-                else:
-                    return False
+                        return False
             else:
                 return False
-        else:
-            return False
     else:
-        return False
+        return False   
     
       
 def llamar_funcion(tokens: list)-> bool:    
@@ -460,7 +440,7 @@ def recorrer_llamado_condicionales(tokens: list)-> bool:
         return can_move(tokens[0:tamaño])
     elif tokens[0][1] == "not":
         return not_cond(tokens[0:tamaño])
-    elif tokens[0][1] == "isZero?":
+    elif tokens[0][1] == "iszero?":
         return isZero(tokens[0:tamaño])
     elif tokens[0][1] == "blocked?":
         return blocked(tokens[0:tamaño])
@@ -504,8 +484,8 @@ def funcion_bien_definida(tokens: list)->bool:
                             if tokens[nuevo_limite][0]==")":
                                 funciones[tokens[1][1]]=len(variables)    
                                 if len(variables) != 0:
-                                    for i in variables:
-                                        variables_globales.remove(i)
+                                    for j in variables:
+                                        variables_globales.remove(j)
                                         
                     centinela_cond = tokens[i][0]== "control"
                     if centinela_cond:
@@ -517,9 +497,9 @@ def funcion_bien_definida(tokens: list)->bool:
                             if nuevo_limite+1<len(tokens): 
                                 i=nuevo_limite+1
                             else:
-                                centinela_fun = False
-                            if tokens[nuevo_limite][0]==")":                    
-                                return True
+                                centinela_cond = False
+                    if tokens[nuevo_limite][0]==")":                    
+                        return True
                 else:
                     return False    
             else:

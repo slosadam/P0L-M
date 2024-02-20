@@ -1,8 +1,0 @@
-(defvar rotate 3)
-
-(defun foo (c p)
-    (put :chips c)
-    (put :balloons p)
-    (move rotate))
-
-(foo 1 3)

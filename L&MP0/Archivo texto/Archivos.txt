@@ -1,0 +1,1 @@
+En esta carpeta deben ir los archivos de texto en formato .txt que serán analizados. 

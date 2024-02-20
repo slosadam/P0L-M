@@ -12,7 +12,7 @@ producciones = {
 }
 """
 estructuras_de_control = ["IF","LOOP","REPEAT"]
-funciones = ["=","MOVE","SKIP","TURN","FACE","PUT","PICK","MOVE-DIR","RUN-DIRS","MOVE-FACE","NULL"]
+funciones = ["=","MOVE","SKIP","TURN","FACE","PUT","PICK","MOVE","MOVE-DIR","RUN-DIRS","MOVE-FACE","NULL"]
 condiciones= ["FACING?","BLOCKED?","CAN-PUT?","CAN-PICK?","CAN-MOVE?","ISZERO?","NOT"]
 variables=[":LEFT",":RIGHT",":AROUND",":NORTH","SOUTH",":EAST",":WEST",":FRONT",":BACK",":BALLOONS",":CHIPS","DIM","MYXPOS","MYYPOS",
            "MYCHIPS","MYBALLOONS","BALLOONSHERE","CHIPSHERE","SPACES"]
